@@ -28,3 +28,4 @@
 118586 Michael_Pellauer 40 true SW_HOCKEN_AVE
 552824 Alan_Ferrency 21 true SW_DAPHNE 
 513414 Navin_Gupta 15 true NW_CEDAR_FALLS_DR
+10000 Lyutakhin_Artyom 17 true Novosibirsk

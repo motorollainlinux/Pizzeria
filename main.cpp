@@ -132,8 +132,8 @@ int PersonFilling(map<int, Person> &MapPerson) {
     return i;
 }
 Person_Order OrderGenerate(map<int, Menu> MapMenu, map<int, Person> MapPerson, tm day, int MaxMenuMap, int MaxPersonMap) {
-    int Random = rand();
-    srand(Random);
+    int Random;
+    //srand(time(NULL));
     int ID;
     Random = rand() % (MaxPersonMap);
     Person person = MapPerson.at(Random);
@@ -144,8 +144,8 @@ Person_Order OrderGenerate(map<int, Menu> MapMenu, map<int, Person> MapPerson, t
     return personorder;
 }
 Person_Visits VisitsGenerate(map<int, Pizzeria> MapPizzeria, map<int, Person> MapPerson, tm day, int MaxPersonMap, int MaxPizzeriaMap) {
-    int Random = rand();
-    srand(Random);
+    int Random;
+    //srand(time(NULL));
     int ID;
     Random = rand() % (MaxPersonMap);
     Person person = MapPerson.at(Random);
@@ -183,24 +183,27 @@ int searchPerson(map<int, Person> MapPerson, long unsigned int ID) {
     return MapPerson.size()-1;
 }
 void WeekTimer(map<int, Pizzeria> MapPizzeria, map<int, Menu> MapMenu, map<int, Person> MapPerson, int MaxPizzeriaMap, int MaxMenuMap, int MaxPersonMap, map<int, Person_Order> &MapPersonOrder, map<int, Person_Visits> &MapPersonVisits) {
-    int Random = rand(), MenuIterrator = 0;
-    srand(Random);
-    fstream LOG("log.txt");
+    int Random, MenuIterrator = 0;
+    //srand(Random);
     tm day;
     day.tm_year = 2023;
     day.tm_mon = 9;
     day.tm_mday = 26;
     int k = 0, l = 0;
     for(int i = 0; i < 15; i++) {
-        Random = rand() % (20-3+1);
+        Random = (rand() % (20-3))+1;
         for(int j = 0; j < Random; j++) {
             Person_Visits personvisits = VisitsGenerate(MapPizzeria, MapPerson, day, MaxPersonMap, MaxPizzeriaMap);
+            //cout << "V: " << personvisits.ID << " " << personvisits.Person_ID << " " << searchPizzeria(MapPizzeria, personvisits.Pizzeria_ID) << "\n";
             MapPersonVisits.emplace(k, personvisits);
             k++;
             }
-        Random = rand() % (20-3+1);
+        Random = (rand() % (20-3))+1;
         for(int j = 0; j < Random; j++) {
             Person_Order personorder = OrderGenerate(MapMenu, MapPerson, day, MaxMenuMap, MaxPersonMap);
+            int indexMenu = searchMenu(MapMenu, personorder.Menu_ID);
+            Menu menu = MapMenu.at(indexMenu);
+            //cout << "O: " << personorder.ID << " " << personorder.Person_ID << " " << searchPizzeria(MapPizzeria, menu.Pizzeria_ID) << "\n";
             MapPersonOrder.emplace(l, personorder);
             l++;
             }
@@ -210,10 +213,8 @@ void WeekTimer(map<int, Pizzeria> MapPizzeria, map<int, Menu> MapMenu, map<int, 
             day.tm_mon++;
         }
     }
-    LOG.close();
 }
 void Results(map<int, Person_Order> MapPersonOrder,map<int, Person_Visits> MapPersonVisits, map<int, Pizzeria> MapPizzeria, map<int, Menu> MapMenu, map<int, Person> MapPerson) {
-    int OrderMapSize = MapPersonOrder.size(), VisitsMapSize = MapPersonVisits.size();
     map<string, int> VisitsAndOrdersCount;
     map<int, int> IvestinsMoney;
     int AveragePrice;
@@ -227,6 +228,7 @@ void Results(map<int, Person_Order> MapPersonOrder,map<int, Person_Visits> MapPe
     for(int i = 0; i < MapPersonVisits.size(); i++) {
         Person_Visits personvisits = MapPersonVisits.at(i);
         int indexPizzeria = searchPizzeria(MapPizzeria, personvisits.Pizzeria_ID);
+        // cout << searchPizzeria(MapPizzeria, personvisits.Pizzeria_ID) << "\n";
         Pizzeria pizzeria = MapPizzeria.at(indexPizzeria);
         VisitsAndOrdersCount[pizzeria.name]++;
     }
@@ -245,8 +247,9 @@ void Results(map<int, Person_Order> MapPersonOrder,map<int, Person_Visits> MapPe
             IsBest = pizzeria.name;
         }
     }
-    cout << "Best Pizzeria of this 2 weeks is: " << IsBest << " whis " << best << "visits and orders!\n";
+    cout << "Best Pizzeria of this 2 weeks is: " << IsBest << " whis " << best << " visits and orders!\n";
     best = 0;
+    IsBest = "";
     for(int i = 0; i < MapPersonVisits.size(); i++) {
         Person_Visits personvisits = MapPersonVisits.at(i);
         int indexPerson = searchPerson(MapPerson, personvisits.Person_ID);
@@ -265,10 +268,15 @@ void Results(map<int, Person_Order> MapPersonOrder,map<int, Person_Visits> MapPe
             Person person = MapPerson.at(i);
             IsBest = person.name;
         }
+        if (IsBest == "") {
+            Person person = MapPerson.at(0);
+            IsBest = person.name;
+        }
     }
-    cout << "most active buyer in 2 weeks is: " << IsBest << " spent: " << best << "rub\n";
+    cout << "most active buyer in 2 weeks is: " << IsBest << " spent: " << best << " rub\n";
 }
 int main() {
+    srand(time(NULL));
     map<int, Pizzeria> MapPizzeria;
     map<int, Menu> MapMenu;
     map<int, Person> MapPerson;
