@@ -133,7 +133,6 @@ int PersonFilling(map<int, Person> &MapPerson) {
 }
 Person_Order OrderGenerate(map<int, Menu> MapMenu, map<int, Person> MapPerson, tm day, int MaxMenuMap, int MaxPersonMap) {
     int Random;
-    //srand(time(NULL));
     int ID;
     Random = rand() % (MaxPersonMap);
     Person person = MapPerson.at(Random);
@@ -145,7 +144,6 @@ Person_Order OrderGenerate(map<int, Menu> MapMenu, map<int, Person> MapPerson, t
 }
 Person_Visits VisitsGenerate(map<int, Pizzeria> MapPizzeria, map<int, Person> MapPerson, tm day, int MaxPersonMap, int MaxPizzeriaMap) {
     int Random;
-    //srand(time(NULL));
     int ID;
     Random = rand() % (MaxPersonMap);
     Person person = MapPerson.at(Random);
@@ -184,7 +182,6 @@ int searchPerson(map<int, Person> MapPerson, long unsigned int ID) {
 }
 void WeekTimer(map<int, Pizzeria> MapPizzeria, map<int, Menu> MapMenu, map<int, Person> MapPerson, int MaxPizzeriaMap, int MaxMenuMap, int MaxPersonMap, map<int, Person_Order> &MapPersonOrder, map<int, Person_Visits> &MapPersonVisits) {
     int Random, MenuIterrator = 0;
-    //srand(Random);
     tm day;
     day.tm_year = 2023;
     day.tm_mon = 9;
@@ -194,7 +191,6 @@ void WeekTimer(map<int, Pizzeria> MapPizzeria, map<int, Menu> MapMenu, map<int, 
         Random = (rand() % (20-3))+1;
         for(int j = 0; j < Random; j++) {
             Person_Visits personvisits = VisitsGenerate(MapPizzeria, MapPerson, day, MaxPersonMap, MaxPizzeriaMap);
-            //cout << "V: " << personvisits.ID << " " << personvisits.Person_ID << " " << searchPizzeria(MapPizzeria, personvisits.Pizzeria_ID) << "\n";
             MapPersonVisits.emplace(k, personvisits);
             k++;
             }
@@ -203,7 +199,6 @@ void WeekTimer(map<int, Pizzeria> MapPizzeria, map<int, Menu> MapMenu, map<int, 
             Person_Order personorder = OrderGenerate(MapMenu, MapPerson, day, MaxMenuMap, MaxPersonMap);
             int indexMenu = searchMenu(MapMenu, personorder.Menu_ID);
             Menu menu = MapMenu.at(indexMenu);
-            //cout << "O: " << personorder.ID << " " << personorder.Person_ID << " " << searchPizzeria(MapPizzeria, menu.Pizzeria_ID) << "\n";
             MapPersonOrder.emplace(l, personorder);
             l++;
             }
@@ -217,18 +212,17 @@ void WeekTimer(map<int, Pizzeria> MapPizzeria, map<int, Menu> MapMenu, map<int, 
 void Results(map<int, Person_Order> MapPersonOrder,map<int, Person_Visits> MapPersonVisits, map<int, Pizzeria> MapPizzeria, map<int, Menu> MapMenu, map<int, Person> MapPerson) {
     map<string, int> VisitsAndOrdersCount;
     map<int, int> IvestinsMoney;
-    int AveragePrice;
+    //int AveragePrice;
     int best = 0;
     string IsBest = "";
-    for(int i = 0; i < MapMenu.size(); i++) {
-        Menu menu = MapMenu.at(i);
-        AveragePrice += menu.Price;
-    }
-    AveragePrice /= 30;
+    // for(int i = 0; i < MapMenu.size(); i++) {
+    //     Menu menu = MapMenu.at(i);
+    //     AveragePrice += menu.Price;
+    // }
+    // AveragePrice /= 30;
     for(int i = 0; i < MapPersonVisits.size(); i++) {
         Person_Visits personvisits = MapPersonVisits.at(i);
         int indexPizzeria = searchPizzeria(MapPizzeria, personvisits.Pizzeria_ID);
-        // cout << searchPizzeria(MapPizzeria, personvisits.Pizzeria_ID) << "\n";
         Pizzeria pizzeria = MapPizzeria.at(indexPizzeria);
         VisitsAndOrdersCount[pizzeria.name]++;
     }
@@ -253,7 +247,7 @@ void Results(map<int, Person_Order> MapPersonOrder,map<int, Person_Visits> MapPe
     for(int i = 0; i < MapPersonVisits.size(); i++) {
         Person_Visits personvisits = MapPersonVisits.at(i);
         int indexPerson = searchPerson(MapPerson, personvisits.Person_ID);
-        IvestinsMoney[indexPerson] += AveragePrice;
+        //IvestinsMoney[indexPerson] += AveragePrice;
     }
     for(int i = 0; i < MapPersonOrder.size(); i++) {
         Person_Order personorder = MapPersonOrder.at(i);
