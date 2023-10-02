@@ -29,3 +29,4 @@
 552824 Alan_Ferrency 21 true SW_DAPHNE 
 513414 Navin_Gupta 15 true NW_CEDAR_FALLS_DR
 10000 Lyutakhin_Artyom 17 true Novosibirsk
+77777 Samojlov_Kirill 17 true Novosibirsk_3_nd_Port_Arturski_Pereulok_62

@@ -3,6 +3,7 @@
 #include <iostream>
 #include <math.h>
 #include <map>
+#include "ErrHadler.h"
 
 using std::cout;
 using std::cin;
@@ -180,13 +181,15 @@ int searchPerson(map<int, Person> MapPerson, long unsigned int ID) {
     }
     return MapPerson.size()-1;
 }
-void WeekTimer(map<int, Pizzeria> MapPizzeria, map<int, Menu> MapMenu, map<int, Person> MapPerson, int MaxPizzeriaMap, int MaxMenuMap, int MaxPersonMap, map<int, Person_Order> &MapPersonOrder, map<int, Person_Visits> &MapPersonVisits) {
+string WeekTimer(map<int, Pizzeria> MapPizzeria, map<int, Menu> MapMenu, map<int, Person> MapPerson, int MaxPizzeriaMap, int MaxMenuMap, int MaxPersonMap, map<int, Person_Order> &MapPersonOrder, map<int, Person_Visits> &MapPersonVisits, Err &err) {
     int Random, MenuIterrator = 0;
+    string Str;
     tm day;
     day.tm_year = 2023;
     day.tm_mon = 9;
     day.tm_mday = 26;
     int k = 0, l = 0;
+    Str = err.ErrorCheck();
     for(int i = 0; i < 15; i++) {
         Random = (rand() % (20-3))+1;
         for(int j = 0; j < Random; j++) {
@@ -208,24 +211,20 @@ void WeekTimer(map<int, Pizzeria> MapPizzeria, map<int, Menu> MapMenu, map<int, 
             day.tm_mon++;
         }
     }
+    return Str;
 }
-void Results(map<int, Person_Order> MapPersonOrder,map<int, Person_Visits> MapPersonVisits, map<int, Pizzeria> MapPizzeria, map<int, Menu> MapMenu, map<int, Person> MapPerson) {
+void Results(map<int, Person_Order> MapPersonOrder,map<int, Person_Visits> MapPersonVisits, map<int, Pizzeria> MapPizzeria, map<int, Menu> MapMenu, map<int, Person> MapPerson, string Str) {
     map<string, int> VisitsAndOrdersCount;
     map<int, int> IvestinsMoney;
-    //int AveragePrice;
     int best = 0;
     string IsBest = "";
-    // for(int i = 0; i < MapMenu.size(); i++) {
-    //     Menu menu = MapMenu.at(i);
-    //     AveragePrice += menu.Price;
-    // }
-    // AveragePrice /= 30;
     for(int i = 0; i < MapPersonVisits.size(); i++) {
         Person_Visits personvisits = MapPersonVisits.at(i);
         int indexPizzeria = searchPizzeria(MapPizzeria, personvisits.Pizzeria_ID);
         Pizzeria pizzeria = MapPizzeria.at(indexPizzeria);
         VisitsAndOrdersCount[pizzeria.name]++;
     }
+    cout << Str << "\n";
     for(int i = 0; i < MapPersonOrder.size(); i++) {
         Person_Order personorder = MapPersonOrder.at(i);
         int indexPizza = searchMenu(MapMenu, personorder.Menu_ID);
@@ -244,11 +243,6 @@ void Results(map<int, Person_Order> MapPersonOrder,map<int, Person_Visits> MapPe
     cout << "Best Pizzeria of this 2 weeks is: " << IsBest << " whis " << best << " visits and orders!\n";
     best = 0;
     IsBest = "";
-    for(int i = 0; i < MapPersonVisits.size(); i++) {
-        Person_Visits personvisits = MapPersonVisits.at(i);
-        int indexPerson = searchPerson(MapPerson, personvisits.Person_ID);
-        //IvestinsMoney[indexPerson] += AveragePrice;
-    }
     for(int i = 0; i < MapPersonOrder.size(); i++) {
         Person_Order personorder = MapPersonOrder.at(i);
         int indexPerson = searchPerson(MapPerson, personorder.Person_ID);
@@ -270,7 +264,9 @@ void Results(map<int, Person_Order> MapPersonOrder,map<int, Person_Visits> MapPe
     cout << "most active buyer in 2 weeks is: " << IsBest << " spent: " << best << " rub\n";
 }
 int main() {
+    Err err;
     srand(time(NULL));
+    string Str;
     map<int, Pizzeria> MapPizzeria;
     map<int, Menu> MapMenu;
     map<int, Person> MapPerson;
@@ -280,7 +276,10 @@ int main() {
     MaxPizzeriaMap = PizzeriaFilling(MapPizzeria);
     MaxMenuMap = MenuFilling(MapMenu);
     MaxPersonMap = PersonFilling(MapPerson);
-    WeekTimer(MapPizzeria, MapMenu, MapPerson, MaxPizzeriaMap, MaxMenuMap, MaxPersonMap, MapPersonOrder, MapPersonVisits);
-    Results(MapPersonOrder, MapPersonVisits, MapPizzeria, MapMenu, MapPerson);
+    Str = WeekTimer(MapPizzeria, MapMenu, MapPerson, MaxPizzeriaMap, MaxMenuMap, MaxPersonMap, MapPersonOrder, MapPersonVisits, err);
+    if(!err.IsCheced) {
+        return -1;
+    }
+    Results(MapPersonOrder, MapPersonVisits, MapPizzeria, MapMenu, MapPerson, Str);
     return 0;
 }
